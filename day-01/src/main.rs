@@ -15,19 +15,19 @@ fn elf_calories(input: &str) -> Vec<u32> {
 }
 
 fn part_a(input: &str) {
-    let mut calories = elf_calories(input);
-    calories.sort();
-    calories.reverse();
+    let mut elves = elf_calories(input);
+    elves.sort();
+    elves.reverse();
 
-    println!("The most calories carried is {}.", calories[0]);
+    println!("The most calories carried is {}.", elves[0]);
 }
 
 fn part_b(input: &str) {
-    let mut calories = elf_calories(input);
-    calories.sort();
-    calories.reverse();
+    let mut elves = elf_calories(input);
+    elves.sort();
+    elves.reverse();
 
-    let most_three_calories: u32 = calories[0..3].iter().sum();
+    let most_three_calories: u32 = elves[0..3].iter().sum();
     println!("The total calories of the top 3 elfs is {}.", most_three_calories);
 }
 
