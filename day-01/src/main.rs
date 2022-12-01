@@ -36,11 +36,8 @@ fn part_b(input: &str) {
     }
 
     elf_calories.sort();
+    elf_calories.reverse();
 
-    let most_three_calories = 
-        elf_calories.pop().unwrap() + 
-        elf_calories.pop().unwrap() + 
-        elf_calories.pop().unwrap();
-
+    let most_three_calories: u32 = elf_calories[0..3].iter().sum();
     println!("The total calories of the top 3 elfs is {}.", most_three_calories);
 }
