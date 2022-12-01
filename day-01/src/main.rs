@@ -11,7 +11,7 @@ fn part_a(input: &str) {
     elves.sort();
     elves.reverse();
 
-    println!("The most calories carried is {}.", elves[0]);
+    println!("[Part A] The most calories carried is {}.", elves[0]);
 }
 
 fn part_b(input: &str) {
@@ -20,7 +20,7 @@ fn part_b(input: &str) {
     elves.reverse();
 
     let most_three_calories: u32 = elves[0..3].iter().sum();
-    println!("The total calories of the top 3 elfs is {}.", most_three_calories);
+    println!("[Part B] The total calories of the top 3 elfs is {}.", most_three_calories);
 }
 
 fn elf_calories(input: &str) -> Vec<u32> {
