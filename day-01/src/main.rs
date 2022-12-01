@@ -6,38 +6,33 @@ fn main() {
     part_b(input);
 }
 
+fn elf_calories(input: &str) -> Vec<u32> {
+    input.split("\r\n\r\n")
+        .map(|elf| elf.lines()
+            .map(|calories| calories.parse::<u32>().unwrap())
+            .sum())
+        .collect()
+}
+
 fn part_a(input: &str) {
-    let elf_groups: Vec<&str> = input.split("\r\n\r\n").collect();
-    let mut most_calories = 0;
+    let mut calories = elf_calories(input);
+    calories.sort();
+    calories.reverse();
 
-    for group in elf_groups {
-        let mut calories: u32 = 0;
-        for calories_str in group.lines() {
-            calories += calories_str.parse::<u32>().unwrap();
-        }   
-        if calories > most_calories {
-            most_calories = calories;
-        }
-    }
-
-    println!("The most calories carried is {}.", most_calories);
+    println!("The most calories carried is {}.", calories[0]);
 }
 
 fn part_b(input: &str) {
-    let elf_groups: Vec<&str> = input.split("\r\n\r\n").collect();
-    let mut elf_calories: Vec<u32> = vec![];
+    let mut calories = elf_calories(input);
+    calories.sort();
+    calories.reverse();
 
-    for group in elf_groups {
-        let mut calories: u32 = 0;
-        for calories_str in group.lines() {
-            calories += calories_str.parse::<u32>().unwrap();
-        }
-        elf_calories.push(calories);
-    }
-
-    elf_calories.sort();
-    elf_calories.reverse();
-
-    let most_three_calories: u32 = elf_calories[0..3].iter().sum();
+    let most_three_calories: u32 = calories[0..3].iter().sum();
     println!("The total calories of the top 3 elfs is {}.", most_three_calories);
+}
+
+#[test]
+fn test_elf_calories() {
+    let input = include_str!("../input/test.txt");
+    assert_eq!(elf_calories(input), vec![6_000, 4_000, 11_000, 24_000, 10_000]);
 }
