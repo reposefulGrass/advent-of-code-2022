@@ -114,8 +114,7 @@ impl NaiveStrategy {
     pub fn score(&self) -> u32 {
         let mut total_score = 0;
 
-        for set in self.moves.iter() {
-            let (opponent, you) = set;
+        for (opponent, you) in self.moves.iter() {
             let outcome = Rps::game_result(*opponent, *you);
 
             total_score += you.score_hand();
@@ -140,8 +139,7 @@ impl SmartStrategy {
     pub fn score(&self) -> u32 {
         let mut total_score = 0;
 
-        for set in self.moves.iter() {
-            let (opponent, result) = set;
+        for (opponent, result) in self.moves.iter() {
             let your_move = opponent.generate_hand(*result);
 
             total_score += your_move.score_hand();
