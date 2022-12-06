@@ -22,17 +22,14 @@ fn part_b(input: &str) {
     let mut total_priority = 0;
     let elves: Vec<&str> = input.lines().collect();
     
-    for elf in elves.chunks(3) {
-        let shared_item = get_shared_item_from_trio(elf[0], elf[1], elf[2])
-            .unwrap();
+    for elf_i in elves.chunks(3) {
+        let shared_item = get_shared_item_from_trio(elf_i[0], elf_i[1], elf_i[2]).unwrap();
         total_priority += priority(shared_item) as u32;
     }
 
     println!("[Part B] The total priority is {}.", total_priority);
 }
 
-// NOTE: This function makes the assumption that the length of the 
-//       parameter s is even.
 fn split_in_half(s: &str) -> (&str, &str) {
     let halfway = s.len() / 2;
     (&s[0..halfway], &s[halfway..])
