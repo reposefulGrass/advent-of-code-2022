@@ -10,7 +10,7 @@ fn part_a(input: &str) {
     let mut total_priority = 0;
 
     for rucksack in input.lines() {
-        let (compartment_a, compartment_b) = split_in_half(rucksack);
+        let (compartment_a, compartment_b) = rucksack.split_at(rucksack.len() / 2);
         let shared_item = get_shared_item_from_pair(compartment_a, compartment_b).unwrap();
         total_priority += priority(shared_item) as u32;
     }
@@ -28,11 +28,6 @@ fn part_b(input: &str) {
     }
 
     println!("[Part B] The total priority is {}.", total_priority);
-}
-
-fn split_in_half(s: &str) -> (&str, &str) {
-    let halfway = s.len() / 2;
-    (&s[0..halfway], &s[halfway..])
 }
 
 fn priority(c: char) -> u8 {
