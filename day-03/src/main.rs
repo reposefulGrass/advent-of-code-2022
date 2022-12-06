@@ -39,15 +39,13 @@ fn split_in_half(s: &str) -> (&str, &str) {
 }
 
 fn priority(c: char) -> u8 {
-    let ascii_value = c as u8;
-    if ascii_value >= 65 && ascii_value <= 90 {
-        return ascii_value - (65 - 27);
+    if c.is_ascii_uppercase() {
+        (c as u8) - ('A' as u8) + 27
+    } else if c.is_ascii_lowercase() {
+        (c as u8) - ('a' as u8) + 1
+    } else {
+        0
     }
-    if ascii_value >= 97 && ascii_value <= 122 {
-        return ascii_value - 97 + 1;
-    }
-
-    0
 }
 
 fn get_shared_item_from_pair(a: &str, b: &str) -> Option<char> {
