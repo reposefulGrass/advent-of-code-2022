@@ -19,6 +19,17 @@ fn main() {
 fn part_a(input: &str) {
     let mut filesystem = FileSystem::new();
     let mut cwd = CurrentWorkingDirectory::new();
+    
+    parse_input(input, &mut filesystem, &mut cwd);
+
+    let mut total_size = 0;
+    for dir in filesystem.find_all_directories_under_size(100_000) {
+        total_size += dir.size();
+    }
+    println!("The total size of all of the directories fitting the conditions is {}.", total_size);
+}
+
+fn parse_input<'a>(input: &'a str, filesystem: &mut FileSystem, cwd: &'a mut CurrentWorkingDirectory<'a>) {
     let mut state = ParsingCommand;
 
     for line in input.lines() {
@@ -50,10 +61,4 @@ fn part_a(input: &str) {
             },
         }
     }
-
-    let mut total_size = 0;
-    for dir in filesystem.find_all_directories_under_size(100_000) {
-        total_size += dir.size();
-    }
-    println!("The total size of all of the directories fitting the conditions is {}.", total_size);
 }
