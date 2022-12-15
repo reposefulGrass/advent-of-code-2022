@@ -49,8 +49,12 @@ impl FileSystem {
         self.root.find_directory(cwd.inner())
     }
 
-    pub fn find_all_directories_under_size(&self, size: u32) -> Vec<&Directory> {
-        self.root.find_all_directories_under_size(size)
+    pub fn get_all_directories(&self) -> Vec<&Directory> {
+        self.root.get_all_directories()
+    }
+
+    pub fn size(&self) -> u32 {
+        self.root.size()
     }
 }
 
@@ -83,18 +87,16 @@ impl Directory {
         None
     }
 
-    fn find_all_directories_under_size(&self, size: u32) -> Vec<&Directory> {
-        let mut selected_dirs = Vec::new();
+    fn get_all_directories(&self) -> Vec<&Directory> {
+        let mut dirs = Vec::new();
 
         for dir in &self.directories {
-            selected_dirs.append(&mut dir.find_all_directories_under_size(size))
+            dirs.append(&mut dir.get_all_directories());
         }
 
-        if self.total_size < size {
-            selected_dirs.push(self);
-        }
+        dirs.push(self);
 
-        selected_dirs
+        dirs
     }
 
     fn recalculate_sizes(&mut self) {

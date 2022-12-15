@@ -14,22 +14,49 @@ fn main() {
     let input = include_str!("../input/input.txt");
 
     part_a(input);
+    part_b(input);
 }
 
 fn part_a(input: &str) {
-    let mut filesystem = FileSystem::new();
-    let mut cwd = CurrentWorkingDirectory::new();
-    
-    parse_input(input, &mut filesystem, &mut cwd);
+    const MAX_SIZE: u32 = 100_000;
+
+    let filesystem = parse_input(input);
 
     let mut total_size = 0;
-    for dir in filesystem.find_all_directories_under_size(100_000) {
-        total_size += dir.size();
+    for dir in filesystem.get_all_directories() {
+        if dir.size() < MAX_SIZE {
+            total_size += dir.size();
+        }
     }
-    println!("The total size of all of the directories fitting the conditions is {}.", total_size);
+    
+    println!("[Part A] The total size of all of the directories fitting the conditions is {}.", total_size);
 }
 
-fn parse_input<'a>(input: &'a str, filesystem: &mut FileSystem, cwd: &'a mut CurrentWorkingDirectory<'a>) {
+fn part_b(input: &str) {
+    const TOTAL_DISK_SPACE: u32 = 70_000_000;
+    const UNUSED_DISK_SPACE: u32 = 30_000_000;
+    const TARGET_DISK_SPACE: u32 = TOTAL_DISK_SPACE - UNUSED_DISK_SPACE;
+
+    let filesystem = parse_input(input);
+    let filesystem_size = filesystem.size();
+
+    let mut sorted_directories = filesystem.get_all_directories();
+    sorted_directories.sort_by_key(|d| d.size());
+
+    let mut selected_directory = None;
+    for dir in sorted_directories {
+        if filesystem_size - dir.size() < TARGET_DISK_SPACE {
+            selected_directory = Some(dir);
+            break;
+        }
+    }
+
+    println!("[Part B] The directory we need to remove has {} bytes.", selected_directory.unwrap().size());
+}
+
+fn parse_input(input: &str) -> FileSystem {
+    let mut filesystem = FileSystem::new();
+    let mut cwd = CurrentWorkingDirectory::new();
     let mut state = ParsingCommand;
 
     for line in input.lines() {
@@ -61,4 +88,6 @@ fn parse_input<'a>(input: &'a str, filesystem: &mut FileSystem, cwd: &'a mut Cur
             },
         }
     }
+
+    filesystem
 }
