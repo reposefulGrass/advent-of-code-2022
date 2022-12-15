@@ -28,7 +28,7 @@ fn part_a(input: &str) {
             total_size += dir.size();
         }
     }
-    
+
     println!("[Part A] The total size of all of the directories fitting the conditions is {}.", total_size);
 }
 
