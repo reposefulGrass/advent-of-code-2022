@@ -1,72 +1,90 @@
 
 use super::forest::Forest;
 
-#[derive(Debug)]
-pub struct Perspective(Vec<Vec<u8>>);
-
+#[derive(PartialEq)]
 pub enum Direction {
     North,
     East,
     South,
-    West
+    West,
+}
+
+/// A Persepctive is a mapping onto a Forest, where each tree of the
+/// forest corresponds to a visibility metric of the perspective.
+///
+/// A visibility metric can range from [0, 4). For each direction
+/// that a tree is visible from, it's corresponding visibility metric
+/// is increased by one.
+#[derive(Debug)]
+pub struct Perspective {
+    row_size: usize,
+    col_size: usize,
+    visibility: Vec<u8>,
+}
+
+impl From<&Forest> for Perspective {
+    fn from(forest: &Forest) -> Self {
+        Perspective {
+            row_size: forest.row_size(),
+            col_size: forest.col_size(),
+            visibility: vec![0; forest.len()],
+        }
+    }
 }
 
 impl Perspective {
-    pub fn new(width: usize, height: usize) -> Self {
-        Perspective(vec![vec![0; width]; height])
+    fn get(&self, row: usize, col: usize) -> Option<&u8> {
+        let index = self.row_size * row + col;
+        self.visibility.get(index)
     }
 
-    pub fn view_forest_from_direction(&mut self, forest: &Forest, direction: Direction) {
-        let view = &mut self.0;
+    fn get_mut(&mut self, row: usize, col: usize) -> Option<&mut u8> {
+        let index = self.row_size * row + col;
+        self.visibility.get_mut(index)
+    }
 
-        let width = forest.inner().get(0).unwrap().len();
-        let height = forest.inner().len();
-
+    pub fn view_from_direction(&mut self, forest: &Forest, direction: Direction) {
         match direction {
             Direction::North => {
-                for outer in 0..width {
+                for col in 0..self.col_size {
                     let mut highest_tree: u8 = 0;
-                    for inner in 0..height {
-                        let tree = forest.inner().get(inner).unwrap().get(outer).unwrap();
-                        if *tree > highest_tree {
-                            highest_tree = *tree;
-                            view[inner][outer] += 1;
+                    for row in 0..self.row_size {
+                        if forest.viewable(row, col, &mut highest_tree) {
+                            let visible = self.get_mut(row, col).expect("in-bounds visiblity");
+                            *visible += 1;
                         }
                     }
                 }
             }
             Direction::East => {
-                for outer in 0..height {
+                for row in 0..self.row_size {
                     let mut highest_tree: u8 = 0;
-                    for inner in (0..width).rev() {
-                        let tree = forest.inner().get(outer).unwrap().get(inner).unwrap();
-                        if *tree > highest_tree {
-                            highest_tree = *tree;
-                            view[outer][inner] += 1;
+                    for col in (0..self.col_size).rev() {
+                        if forest.viewable(row, col, &mut highest_tree) {
+                            let visible = self.get_mut(row, col).expect("in-bounds visiblity");
+                            *visible += 1;
                         }
                     }
                 }
             }
             Direction::South => {
-                for outer in 0..width {
+                for col in 0..self.col_size {
                     let mut highest_tree: u8 = 0;
-                    for inner in (0..height).rev() {
-                        let tree = forest.inner().get(inner).unwrap().get(outer).unwrap();
-                        if *tree > highest_tree {
-                            highest_tree = *tree;
-                            view[inner][outer] += 1;
+                    for row in (0..self.row_size).rev() {
+                        if forest.viewable(row, col, &mut highest_tree) {
+                            let visible = self.get_mut(row, col).expect("in-bounds visiblity");
+                            *visible += 1;
                         }
                     }
                 }
             }
             Direction::West => {
-                for outer in 0..height {
+                for row in 0..self.row_size {
                     let mut highest_tree: u8 = 0;
-                    for inner in 0..width {
-                        let tree = forest.inner().get(outer).unwrap().get(inner).unwrap();
-                        if *tree > highest_tree {
-                            highest_tree = *tree;
-                            view[outer][inner] += 1;
+                    for col in 0..self.col_size {
+                        if forest.viewable(row, col, &mut highest_tree) {
+                            let visible = self.get_mut(row, col).expect("in-bounds visiblity");
+                            *visible += 1;
                         }
                     }
                 }
@@ -74,23 +92,15 @@ impl Perspective {
         }
     }
 
-    pub fn count_visible_trees(&self) -> u32 {
-        let view = &self.0;
-
-        let width = view.get(0).unwrap().len();
-        let height = view.len();
-
-        let mut count = 0;
-        for outer in 1..height-1 {
-            for inner in 1..width-1 {
-                let visibility = view.get(outer).unwrap().get(inner).unwrap();
-                if *visibility > 0 {
-                    count += 1;
+    pub fn total_visible_trees(&self) -> u32 {
+        let mut total = (2 * self.row_size + 2 * self.col_size - 4) as u32;
+        for row in 1..(self.row_size-1) {
+            for col in 1..(self.col_size-1) {
+                if *self.get(row, col).unwrap() > 0 {
+                    total += 1;
                 }
             }
         }
-
-        // count the edges of the forest as visible
-        (2 * width + 2 * height - 4) as u32 + count
+        total
     }
 }

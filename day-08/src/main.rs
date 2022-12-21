@@ -14,16 +14,19 @@ fn main() {
 
 fn part_a(input: &str) {
     let forest: Forest = input.parse().unwrap();
-    let mut perspective = Perspective::new(forest.width(), forest.height());
+    let mut perspective = Perspective::from(&forest);
 
-    perspective.view_forest_from_direction(&forest, Direction::North);
-    perspective.view_forest_from_direction(&forest, Direction::East);
-    perspective.view_forest_from_direction(&forest, Direction::South);
-    perspective.view_forest_from_direction(&forest, Direction::West);
+    perspective.view_from_direction(&forest, Direction::North);
+    perspective.view_from_direction(&forest, Direction::East);
+    perspective.view_from_direction(&forest, Direction::South);
+    perspective.view_from_direction(&forest, Direction::West);
 
-    println!("There are {:?} visible trees.", perspective.count_visible_trees());
+    println!("There are {} trees visible.", perspective.total_visible_trees());
 }
 
 fn part_b(input: &str) {
+    let forest: Forest = input.parse().unwrap();
+    let score = forest.find_best_tree();
 
+    println!("The best tree has a scenic score of {}.", score);
 }
